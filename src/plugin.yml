@@ -1,0 +1,13 @@
+main: com.shadow2hel.atlas.Atlas
+name: Atlas
+version: 1.0
+api-version: 1.14
+author: Shadow2hel
+description: A plugin used to save coords.
+commands:
+  atlas:
+    description: Add a location to the list.
+    usage: /atlas <name> [x] [y] [z]
+    aliases: [coords, at]
+    permission: Atlas.atlas
+    permission-message: You don't have the Atlas.atlas permission.
