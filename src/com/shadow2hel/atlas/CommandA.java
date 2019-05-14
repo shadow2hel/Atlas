@@ -7,7 +7,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
-import org.bukkit.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,19 +52,19 @@ public class CommandA implements TabExecutor {
                             case "all":
                                 pl.sendMessage(ChatColor.GREEN + "Overworld" + ChatColor.RESET + ":");
                                 main.coords.getEarthmap().forEach((sl, location) -> pl.sendMessage(String.format("   %s: " +
-                                                "%s%d %s%d %s%d", sl, ChatColor.RED, (int)Math.round(location.getX()),
+                                                "%s%d %s%d %s%d", CustomColors.filterPlaceholder(sl), ChatColor.RED, (int)Math.round(location.getX()),
                                         ChatColor.GREEN, (int)Math.round(location.getY()), ChatColor.BLUE,
                                         (int)Math.round(location.getZ()))));
 
                                 pl.sendMessage(ChatColor.RED + "Nether" + ChatColor.RESET + ":");
                                 main.coords.getHellmap().forEach((sl, location) -> pl.sendMessage(String.format("   %s: " +
-                                        "%s%d %s%d %s%d", sl, ChatColor.RED, (int)Math.round(location.getX()),
+                                        "%s%d %s%d %s%d", CustomColors.filterPlaceholder(sl), ChatColor.RED, (int)Math.round(location.getX()),
                                         ChatColor.GREEN, (int)Math.round(location.getY()), ChatColor.BLUE,
                                         (int)Math.round(location.getZ()))));
 
                                 pl.sendMessage("The End:");
                                 main.coords.getEndmap().forEach((sl, location) -> pl.sendMessage(String.format("   %s: " +
-                                                "%s%d %s%d %s%d", sl, ChatColor.RED, (int)Math.round(location.getX()),
+                                                "%s%d %s%d %s%d", CustomColors.filterPlaceholder(sl), ChatColor.RED, (int)Math.round(location.getX()),
                                         ChatColor.GREEN, (int)Math.round(location.getY()), ChatColor.BLUE,
                                         (int)Math.round(location.getZ()))));
 
@@ -73,21 +72,21 @@ public class CommandA implements TabExecutor {
                             case "world":
                                 pl.sendMessage(ChatColor.GREEN + "Overworld" + ChatColor.RESET + ":");
                                 main.coords.getEarthmap().forEach((sl, location) -> pl.sendMessage(String.format("   %s: " +
-                                                "%s%d %s%d %s%d", sl, ChatColor.RED, (int)Math.round(location.getX()),
+                                                "%s%d %s%d %s%d", CustomColors.filterPlaceholder(sl), ChatColor.RED, (int)Math.round(location.getX()),
                                         ChatColor.GREEN, (int)Math.round(location.getY()), ChatColor.BLUE,
                                         (int)Math.round(location.getZ()))));
                                 break;
                             case "nether":
                                 pl.sendMessage(ChatColor.RED + "Nether" + ChatColor.RESET + ":");
                                 main.coords.getHellmap().forEach((sl, location) -> pl.sendMessage(String.format("   %s: " +
-                                                "%s%d %s%d %s%d", sl, ChatColor.RED, (int)Math.round(location.getX()),
+                                                "%s%d %s%d %s%d", CustomColors.filterPlaceholder(sl), ChatColor.RED, (int)Math.round(location.getX()),
                                         ChatColor.GREEN, (int)Math.round(location.getY()), ChatColor.BLUE,
                                         (int)Math.round(location.getZ()))));
                                 break;
                             case "end":
                                 pl.sendMessage("The End:");
                                 main.coords.getEndmap().forEach((sl, location) -> pl.sendMessage(String.format("   %s: " +
-                                                "%s%d %s%d %s%d", sl, ChatColor.RED, (int)Math.round(location.getX()),
+                                                "%s%d %s%d %s%d", CustomColors.filterPlaceholder(sl), ChatColor.RED, (int)Math.round(location.getX()),
                                         ChatColor.GREEN, (int)Math.round(location.getY()), ChatColor.BLUE,
                                         (int)Math.round(location.getZ()))));
                                 break;

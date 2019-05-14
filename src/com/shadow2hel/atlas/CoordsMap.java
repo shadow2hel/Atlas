@@ -1,17 +1,16 @@
 package com.shadow2hel.atlas;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import javax.xml.bind.annotation.XmlType;
+import java.lang.reflect.Array;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 public class CoordsMap {
     private HashMap<String, Location> earthmap;
@@ -19,7 +18,7 @@ public class CoordsMap {
     private HashMap<String, Location> endmap;
     private Atlas main;
 
-    CoordsMap(Atlas main) {
+    CoordsMap(Atlas main) { //test
         this.main = main;
         this.earthmap = new HashMap<>();
         this.hellmap = new HashMap<>();
@@ -76,31 +75,54 @@ public class CoordsMap {
     void addToCoords(Player pl, World.Environment type, String name, Location xyz){
         switch(type){
             case NORMAL:
-                if(!earthmap.containsKey(name)) {
+                List<String> map = new ArrayList<>(earthmap.keySet());
+                removeCCoding(map);
+                if(!map.contains(removeCCString(name))) {
                     earthmap.put(name, xyz);
-                    pl.sendMessage(String.format("Added %s to the list!", name));
+                    pl.sendMessage(String.format("Added %s to the list!", CustomColors.filterPlaceholder(name)));
                 } else {
                     pl.sendMessage("This name already exists!");
                 }
                 break;
             case NETHER:
-                if(!hellmap.containsKey(name)){
+                map = new ArrayList<>(hellmap.keySet());
+                removeCCoding(map);
+                if(!map.contains(removeCCString(name))){
                     hellmap.put(name, xyz);
-                    pl.sendMessage(String.format("Added %s to the list!", name));
+                    pl.sendMessage(String.format("Added %s to the list!", CustomColors.filterPlaceholder(name)));
                 } else {
                     pl.sendMessage("This name already exists!");
                 }
                 break;
             case THE_END:
-                if(!endmap.containsKey(name)){
+                map = new ArrayList<>(endmap.keySet());
+                removeCCoding(map);
+                if(!map.contains(removeCCString(name))){
                     endmap.put(name, xyz);
-                    pl.sendMessage(String.format("Added %s to the list!", name));
+                    pl.sendMessage(String.format("Added %s to the list!", CustomColors.filterPlaceholder(name)));
                 } else {
                     pl.sendMessage("This name already exists!");
                 }
                 break;
         }
         addtoConfig(type, name, xyz);
+    }
+
+    private void removeCCoding(List<String> map) {
+        for (int i = 0; i < map.size(); i++) {
+            for (Map.Entry<String, ChatColor> entry : CustomColors.getMap().entrySet()) {
+                String s1 = entry.getKey();
+                String nextstr = map.get(i).replaceAll(s1, "");
+                map.set(i, nextstr);
+            }
+        }
+    }
+
+    private String removeCCString(String name){
+        for (String entry : CustomColors.getMap().keySet()) {
+            name = name.replaceAll(entry, "");
+        }
+        return name;
     }
 
     private void addtoConfig(World.Environment type, String name, Location xyz){
