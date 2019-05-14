@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import javax.xml.bind.annotation.XmlType;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -64,7 +65,7 @@ public class CoordsMap {
                     NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
                     Number number = format.parse(strings[i]);
                     coordinates[i] = number.intValue();
-                } catch(ParseException e){
+                } catch(ParseException ignored){
                 }
             }
             Location newxyz = new Location(world, coordinates[0], coordinates[1], coordinates[2]);

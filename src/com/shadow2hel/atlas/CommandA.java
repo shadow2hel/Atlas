@@ -1,5 +1,6 @@
 package com.shadow2hel.atlas;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -29,7 +30,6 @@ public class CommandA implements TabExecutor {
                 if(arg.length == 1) {
                     main.coords.addToCoords(pl, pl.getWorld().getEnvironment(), arg[0], new Location(pl.getWorld(), pl.getLocation().getX(), pl.getLocation().getY(), pl.getLocation().getZ()));
                 } else if(arg.length==2){
-
                     if(strWorlds.contains(arg[0].toLowerCase())){
                         switch(arg[0]){
                             case "world":
@@ -46,6 +46,50 @@ public class CommandA implements TabExecutor {
                                 main.coords.addToCoords(pl, World.Environment.NETHER, arg[1],
                                         new Location(main.getAppropriateWorld(World.Environment.NETHER),
                                                 pl.getLocation().getX(), pl.getLocation().getY(), pl.getLocation().getZ()));
+                                break;
+                        }
+                    } else if(arg[0].toLowerCase().equals("show")) {
+                        switch(arg[1].toLowerCase()){
+                            case "all":
+                                pl.sendMessage(ChatColor.GREEN + "Overworld" + ChatColor.RESET + ":");
+                                main.coords.getEarthmap().forEach((sl, location) -> pl.sendMessage(String.format("   %s: " +
+                                                "%s%d %s%d %s%d", sl, ChatColor.RED, (int)Math.round(location.getX()),
+                                        ChatColor.GREEN, (int)Math.round(location.getY()), ChatColor.BLUE,
+                                        (int)Math.round(location.getZ()))));
+
+                                pl.sendMessage(ChatColor.RED + "Nether" + ChatColor.RESET + ":");
+                                main.coords.getHellmap().forEach((sl, location) -> pl.sendMessage(String.format("   %s: " +
+                                        "%s%d %s%d %s%d", sl, ChatColor.RED, (int)Math.round(location.getX()),
+                                        ChatColor.GREEN, (int)Math.round(location.getY()), ChatColor.BLUE,
+                                        (int)Math.round(location.getZ()))));
+
+                                pl.sendMessage("The End:");
+                                main.coords.getEndmap().forEach((sl, location) -> pl.sendMessage(String.format("   %s: " +
+                                                "%s%d %s%d %s%d", sl, ChatColor.RED, (int)Math.round(location.getX()),
+                                        ChatColor.GREEN, (int)Math.round(location.getY()), ChatColor.BLUE,
+                                        (int)Math.round(location.getZ()))));
+
+                                break;
+                            case "world":
+                                pl.sendMessage(ChatColor.GREEN + "Overworld" + ChatColor.RESET + ":");
+                                main.coords.getEarthmap().forEach((sl, location) -> pl.sendMessage(String.format("   %s: " +
+                                                "%s%d %s%d %s%d", sl, ChatColor.RED, (int)Math.round(location.getX()),
+                                        ChatColor.GREEN, (int)Math.round(location.getY()), ChatColor.BLUE,
+                                        (int)Math.round(location.getZ()))));
+                                break;
+                            case "nether":
+                                pl.sendMessage(ChatColor.RED + "Nether" + ChatColor.RESET + ":");
+                                main.coords.getHellmap().forEach((sl, location) -> pl.sendMessage(String.format("   %s: " +
+                                                "%s%d %s%d %s%d", sl, ChatColor.RED, (int)Math.round(location.getX()),
+                                        ChatColor.GREEN, (int)Math.round(location.getY()), ChatColor.BLUE,
+                                        (int)Math.round(location.getZ()))));
+                                break;
+                            case "end":
+                                pl.sendMessage("The End:");
+                                main.coords.getEndmap().forEach((sl, location) -> pl.sendMessage(String.format("   %s: " +
+                                                "%s%d %s%d %s%d", sl, ChatColor.RED, (int)Math.round(location.getX()),
+                                        ChatColor.GREEN, (int)Math.round(location.getY()), ChatColor.BLUE,
+                                        (int)Math.round(location.getZ()))));
                                 break;
                         }
                     }
@@ -116,16 +160,51 @@ public class CommandA implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] arg) {
-        final String[] COMMANDS = {"name", "world", "nether", "end"};
-        List<String> completions = new ArrayList<>();
-        //copy matches of first argument from list (ex: if first arg is 'm' will return just 'minecraft')
-        if(arg.length>1){
-            completions.clear();
+        if (command.getLabel().equals("atlas")) {
+            List<String> all = new ArrayList<>(Arrays.asList("world", "nether", "end", "locationname", "show"));
+            List<String> worlds = new ArrayList<>(Arrays.asList("world", "nether", "end"));
+            List<String> worldLists = new ArrayList<>(Arrays.asList("all", "world", "nether", "end"));
+            String coords = String.format("%d %d %d", Math.round(((Player) commandSender).getLocation().getX()), Math.round(((Player) commandSender).getLocation().getY()), Math.round(((Player) commandSender).getLocation().getZ()));
+            List<String> completions = new ArrayList<>();
+            if (arg.length == 1) {
+                if (arg[0].equals("")) {
+
+                    completions.addAll(all);
+                } else {
+                    for (String sl : all) {
+                        if (sl.startsWith(arg[0])) {
+                            completions.add(sl);
+                        }
+                    }
+
+                }
+            } else if (arg.length == 2) {
+                if (worlds.contains(arg[0].toLowerCase())) {
+                    completions.add("locationname");
+                } else if(!all.contains(arg[0].toLowerCase()) || arg[0].toLowerCase().equals("locationname")){
+                    completions.add(coords);
+                } else if(arg[0].toLowerCase().equals("show")){
+                    if(!arg[1].equals("")){
+                        for (String list : worldLists) {
+                            if(list.startsWith(arg[1].toLowerCase())){
+                                completions.add(list);
+                            }
+                        }
+                    } else {
+                        completions.addAll(worldLists);
+                    }
+                }
+            } else if (arg.length == 3) {
+                if (!arg[1].equals("") && !arg[0].equals("show")) {
+                    completions.add(coords);
+                }
+            } else {
+                completions.clear();
+            }
+            Collections.sort(completions);
+            return completions;
         } else {
-            StringUtil.copyPartialMatches(arg[0], Arrays.asList(COMMANDS), completions);
+            return null;
         }
-        //sort the list
-        Collections.sort(completions);
-        return completions;
     }
 }
