@@ -20,15 +20,4 @@ public class Atlas extends JavaPlugin {
     public void loadConfig(){
         coords = new CoordsMap(this);
     }
-
-    public World getAppropriateWorld(World.Environment type){
-        World rworld = null;
-        for(World world : getServer().getWorlds()){
-            if(world.getEnvironment() == type){
-                rworld = world;
-            }
-        }
-
-        return rworld;
-    }
 }
