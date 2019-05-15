@@ -1,5 +1,6 @@
 package com.shadow2hel.atlas;
 
+import com.shadow2hel.shadylibrary.util.StringUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -7,7 +8,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -58,7 +58,7 @@ public class CommandA implements TabExecutor {
                     List<String> thingsToCheck = new ArrayList<>(strWorlds);
                     thingsToCheck.add("show");
 
-                    if(!thingsToCheck.contains(arg[0].toLowerCase()) && arg.length == 4){
+                    if (!thingsToCheck.contains(arg[0].toLowerCase()) && arg.length == 4) {
                         Location newloc = null;
                         try {
                             newloc = new Location(pl.getWorld(), Double.parseDouble(arg[1]),
@@ -97,13 +97,14 @@ public class CommandA implements TabExecutor {
             }
 
         }
+
         return true;
     }
 
     private void selectWorld(Player pl, World world) {
         pl.sendMessage(world.getName().substring(0, 1).toUpperCase() + world.getName().substring(1) + ": ");
         main.coords.getAllmaps().get(world).forEach((s1, location) -> pl.sendMessage(String.format("   %s: " +
-                        "%s%d %s%d %s%d", CustomColors.filterPlaceholder(s1), ChatColor.RED, (int) Math.round(location.getX()),
+                        "%s%d %s%d %s%d", StringUtil.filterColorCoding(s1), ChatColor.RED, (int) Math.round(location.getX()),
                 ChatColor.GREEN, (int) Math.round(location.getY()), ChatColor.BLUE,
                 (int) Math.round(location.getZ()))));
         pl.sendMessage("");
@@ -111,55 +112,61 @@ public class CommandA implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] arg) {
-        if (command.getLabel().equals("atlas")) {
-            List<String> worlds = new ArrayList<>();
-            main.getServer().getWorlds().forEach(world -> worlds.add(world.getName()));
-            List<String> worldLists = new ArrayList<>(Arrays.asList("all"));
-            worldLists.addAll(worlds);
-            worldLists.add("all");
-            List<String> all = new ArrayList<>(worlds);
-            all.addAll(Arrays.asList("locationname", "show"));
-            String coords = String.format("%d %d %d", Math.round(((Player) commandSender).getLocation().getX()), Math.round(((Player) commandSender).getLocation().getY()), Math.round(((Player) commandSender).getLocation().getZ()));
-            List<String> completions = new ArrayList<>();
-            if (arg.length == 1) {
-                if (arg[0].equals("")) {
+        if (commandSender.hasPermission("Atlas.atlas")) {
+            if (command.getLabel().equals("atlas")) {
+                List<String> worlds = new ArrayList<>();
+                main.getServer().getWorlds().forEach(world -> worlds.add(world.getName()));
+                List<String> worldLists = new ArrayList<>(Arrays.asList("all"));
+                worldLists.addAll(worlds);
+                worldLists.add("all");
+                List<String> all = new ArrayList<>(worlds);
+                all.addAll(Arrays.asList("locationname", "show"));
+                String coords = String.format("%d %d %d", Math.round(((Player) commandSender).getLocation().getX()), Math.round(((Player) commandSender).getLocation().getY()), Math.round(((Player) commandSender).getLocation().getZ()));
+                List<String> completions = new ArrayList<>();
+                if (arg.length == 1) {
+                    if (arg[0].equals("")) {
 
-                    completions.addAll(all);
-                } else {
-                    for (String sl : all) {
-                        if (sl.startsWith(arg[0])) {
-                            completions.add(sl);
-                        }
-                    }
-
-                }
-            } else if (arg.length == 2) {
-                if (worlds.contains(arg[0].toLowerCase())) {
-                    completions.add("locationname");
-                } else if (!all.contains(arg[0].toLowerCase()) || arg[0].toLowerCase().equals("locationname")) {
-                    completions.add(coords);
-                } else if (arg[0].toLowerCase().equals("show")) {
-                    if (!arg[1].equals("")) {
-                        for (String list : worldLists) {
-                            if (list.startsWith(arg[1].toLowerCase())) {
-                                completions.add(list);
+                        completions.addAll(all);
+                    } else {
+                        for (String sl : all) {
+                            if (sl.startsWith(arg[0])) {
+                                completions.add(sl);
                             }
                         }
-                    } else {
-                        completions.addAll(worldLists);
+
                     }
+                } else if (arg.length == 2) {
+                    if (worlds.contains(arg[0].toLowerCase())) {
+                        completions.add("locationname");
+                    } else if (!all.contains(arg[0].toLowerCase()) || arg[0].toLowerCase().equals("locationname")) {
+                        completions.add(coords);
+                    } else if (arg[0].toLowerCase().equals("show")) {
+                        if (!arg[1].equals("")) {
+                            for (String list : worldLists) {
+                                if (list.startsWith(arg[1].toLowerCase())) {
+                                    completions.add(list);
+                                }
+                            }
+                        } else {
+                            completions.addAll(worldLists);
+                        }
+                    }
+                } else if (arg.length == 3) {
+                    if (!arg[1].equals("") && !arg[0].equals("show")) {
+                        completions.add(coords);
+                    }
+                } else {
+                    completions.clear();
                 }
-            } else if (arg.length == 3) {
-                if (!arg[1].equals("") && !arg[0].equals("show")) {
-                    completions.add(coords);
-                }
+                Collections.sort(completions);
+                return completions;
             } else {
-                completions.clear();
+                List<String> empty = new ArrayList<>();
+                return empty;
             }
-            Collections.sort(completions);
-            return completions;
         } else {
-            return null;
+            List<String> empty = new ArrayList<>();
+            return empty;
         }
     }
 }

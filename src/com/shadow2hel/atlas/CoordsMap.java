@@ -1,6 +1,6 @@
 package com.shadow2hel.atlas;
 
-import org.bukkit.ChatColor;
+import com.shadow2hel.shadylibrary.util.StringUtil;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -57,28 +57,18 @@ public class CoordsMap {
 
     void addToCoords(Player pl, World world, String name, Location xyz){
         List<String> map = new ArrayList<>(allmaps.get(world).keySet());
-        removeCCoding(map);
+        StringUtil.removeCCoding(map);
         if(!map.contains(removeCCString(name))) {
             allmaps.get(world).put(name, xyz);
-            pl.sendMessage(String.format("Added %s to the list!", CustomColors.filterPlaceholder(name)));
+            pl.sendMessage(String.format("Added %s to the list!", StringUtil.filterColorCoding(name)));
         } else {
             pl.sendMessage("This name already exists!");
         }
         addtoConfig(world);
     }
 
-    private void removeCCoding(List<String> map) {
-        for (int i = 0; i < map.size(); i++) {
-            for (Map.Entry<String, ChatColor> entry : CustomColors.getMap().entrySet()) {
-                String s1 = entry.getKey();
-                String nextstr = map.get(i).replaceAll(s1, "");
-                map.set(i, nextstr);
-            }
-        }
-    }
-
     private String removeCCString(String name){
-        for (String entry : CustomColors.getMap().keySet()) {
+        for (String entry : StringUtil.getMap().keySet()) {
             name = name.replaceAll(entry, "");
         }
         return name;

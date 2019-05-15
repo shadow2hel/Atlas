@@ -10,4 +10,13 @@ commands:
     usage: /atlas <name> [x] [y] [z]
     aliases: [coords, at]
     permission: Atlas.atlas
-    permission-message: You don't have the Atlas.atlas permission.
+    permission-message: You don't have permission to use /atlas!
+permissions:
+  Atlas.*:
+    description: Wildcard permission
+    default: op
+    children:
+      Atlas.atlas: true
+  Atlas.atlas:
+    description: Permission to use atlas command
+
